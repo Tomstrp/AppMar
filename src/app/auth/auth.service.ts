@@ -1,42 +1,46 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 
-interface User {
-  username: string;
-  token: string;
-}
+import { environment } from '../../enviroments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  apiUrl = '';
-  currentUser = signal<User | null>(null);
+  private token = signal<string | null>(null);
   private httpClient = inject(HttpClient);
 
   constructor() {
-    // All'avvio, recupero eventuale utente salvato
-    const savedUser = localStorage.getItem('currentUser');
-    if (savedUser) {
-      this.currentUser.set(JSON.parse(savedUser));
+    const savedToken = localStorage.getItem('TOKEN');
+    if (savedToken) {
+      this.token.set(savedToken);
     }
   }
 
   login(username: string, password: string) {
-    return this.httpClient.post<User>('/api/login', { username, password }).pipe(
-      tap(user => {
-        this.currentUser.set(user);
-        localStorage.setItem('currentUser', JSON.stringify(user));
-      })
-    );
+    var postData = { "Username": username, "Password": password };
+    console.log(postData);
+    return this.httpClient.post<{token:string}>(`${environment.authApiUrl}/Auth/Login`, postData)
+      .pipe(
+        tap(result => {
+          this.token.set(result.token);
+          localStorage.setItem('TOKEN', result.token);
+        })
+      );
   }
 
   logout() {
-    this.currentUser.set(null);
-    localStorage.removeItem('currentUser');
+    this.token.set(null);
+    localStorage.removeItem('TOKEN');
   }
 
-  isLoggedIn() {
-    return this.currentUser() !== null;
+  isAuthenticated() {
+    console.log('this.token(): '+this.token() );
+    return this.token() !== null;
   }
+
+  getToken(){
+    return this.token();
+  }
+
 }

@@ -1,5 +1,6 @@
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { debounceTime, of } from 'rxjs';
 
 import { AuthService } from '../auth.service';
@@ -19,9 +20,12 @@ if (savedForm) {
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
+
 export class LoginComponent implements OnInit {
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
+  private router = inject(Router);
+
   form = new FormGroup({
     email: new FormControl(initialEmailValue, {
       validators: [Validators.email, Validators.required]
@@ -62,11 +66,18 @@ export class LoginComponent implements OnInit {
     this.destroyRef.onDestroy(() => subscription.unsubscribe());
   }
 
+  isAuthenticated(){
+    return this.authService.isAuthenticated();
+  }
+
   onSubmit() {
-    console.log(this.form);
     const enteredEmail = this.form.value.email;
     const enteredPassword = this.form.value.password;
-    this.authService.login(enteredEmail || "", enteredPassword || "").subscribe()
-    console.log(enteredEmail, enteredPassword);
+    this.authService.login(enteredEmail || "", enteredPassword || "").subscribe({
+      next:()=> {       
+        this.router.navigate(['briefingcon'], {replaceUrl: true});
+      }
+    });
   }
+  
 }
