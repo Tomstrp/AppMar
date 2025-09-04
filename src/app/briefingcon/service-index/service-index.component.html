@@ -1,0 +1,84 @@
+<header>
+  <h1>Servizi</h1>
+</header>
+<div class="servizi-index">
+  <div class="filtri-container">
+    <form class="filtri" [formGroup]="formFilter" (ngSubmit)="applyFilter()">
+      <mat-form-field>
+        <input matInput class="form-field" formControlName="filterId" placeholder="ID">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Choose a date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="filterDate">
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Turno</mat-label>
+        <mat-select formControlName="filterTurn">
+          <mat-option value="">Tutti</mat-option>
+          <mat-option value="A">A</mat-option>
+          <mat-option value="B">B</mat-option>
+          <mat-option value="C">C</mat-option>
+          <mat-option value="D">D</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Notturno</mat-label>
+        <mat-select formControlName="filterNightly">
+          <mat-option value="">Tutti</mat-option>
+          <mat-option value="false">Diurno</mat-option>
+          <mat-option value="true">Notturno</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput class="form-field" formControlName="filterUsername" placeholder="Username">
+      </mat-form-field>      
+      @if(loading()){
+        <mat-spinner diameter="20"></mat-spinner>
+      }
+      @else{
+        <button mat-flat-button type="submit" [disabled]="!formFilter.dirty" >FILTRA</button>
+        <button mat-flat-button type="button" [disabled]="!formFilter.dirty" (click)="resetFilter()" >RESET</button>
+      }
+    </form>
+  </div>
+  <div class="table-container">
+    <table mat-table [dataSource]="dataSource" matSort class="servizi-table mat-elevation-z8">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> ID 
+        </th>
+        <td mat-cell *matCellDef="let element">{{element.id}}</td>
+      </ng-container>
+      <ng-container matColumnDef="data">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> DATA </th>
+        <td mat-cell *matCellDef="let element">{{element.data}}</td>
+      </ng-container>
+      <ng-container matColumnDef="turno">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> TURNO </th>
+        <td mat-cell *matCellDef="let element">{{element.turno}}</td>
+      </ng-container>
+      <ng-container matColumnDef="notturno">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> NOTTURNO </th>
+        <td mat-cell *matCellDef="let element">{{element.notturno ? "Si" : "No"}}</td>
+      </ng-container>
+      <ng-container matColumnDef="username">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> USERNAME </th>
+        <td mat-cell *matCellDef="let element">{{element.username}}</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>  
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+          Nessun risultato trovato
+        </td>
+      </tr>      
+    </table>
+    <mat-paginator [length]="resultsLength"
+                [pageSize]="5"
+                [pageSizeOptions]="[5, 10, 25]"
+                showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</div>

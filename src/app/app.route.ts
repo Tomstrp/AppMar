@@ -1,5 +1,5 @@
 import { Routes } from "@angular/router";
-import { BriefingconIndexComponent } from "./briefingcon/briefingcon-index/briefingcon-index.component";
+import { ServiceIndexComponent } from "./briefingcon/service-index/service-index.component";
 import { LoginComponent } from "./auth/login/login.component";
 import { AuthGuard } from "./auth/auth.guard";
 import { LoginGuard } from "./auth/login/login.guard";
@@ -13,7 +13,7 @@ export const routes:Routes  = [
     {
         path: 'briefingcon',
         canActivate: [AuthGuard],
-        component: BriefingconIndexComponent
+        component: ServiceIndexComponent
     },
     { path: '**', redirectTo: 'login' }
 ];

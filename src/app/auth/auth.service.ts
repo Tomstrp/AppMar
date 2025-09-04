@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 
-import { environment } from '../../enviroments/environment';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -19,7 +19,6 @@ export class AuthService {
 
   login(username: string, password: string) {
     var postData = { "Username": username, "Password": password };
-    console.log(postData);
     return this.httpClient.post<{token:string}>(`${environment.authApiUrl}/Auth/Login`, postData)
       .pipe(
         tap(result => {
@@ -35,7 +34,6 @@ export class AuthService {
   }
 
   isAuthenticated() {
-    console.log('this.token(): '+this.token() );
     return this.token() !== null;
   }
 
